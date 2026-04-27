@@ -28,10 +28,12 @@ public class StudentService {
     @Transactional
     public void deleteStudent(Integer id) {
         // Drop dependent records safely to bypass Foreign Key constraint exceptions
-        jdbcTemplate.update("DELETE FROM Payments WHERE participant_id = ?", id);
-        jdbcTemplate.update("DELETE FROM Certificates WHERE participant_id = ?", id);
-        jdbcTemplate.update("DELETE FROM Feedbacks WHERE participant_id = ?", id);
-        jdbcTemplate.update("DELETE FROM Event_Participants WHERE participant_id = ?", id);
+        // Using lowercase snake_case table names as per the actual database schema
+        jdbcTemplate.update("DELETE FROM event_registrations WHERE participant_id = ?", id);
+        jdbcTemplate.update("DELETE FROM payments WHERE participant_id = ?", id);
+        jdbcTemplate.update("DELETE FROM certificates WHERE participant_id = ?", id);
+        jdbcTemplate.update("DELETE FROM feedbacks WHERE participant_id = ?", id);
+        jdbcTemplate.update("DELETE FROM event_participants WHERE participant_id = ?", id);
         
         studentRepository.deleteById(id);
     }

@@ -52,6 +52,34 @@
         <span th:text="${success}"></span>
     </div>
 
+    <!-- Admin Stats Dashboard -->
+    <div sec:authorize="hasRole('ADMIN')">
+        <div class="section-label">System Overview</div>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon purple">🎪</div>
+                <div class="stat-info">
+                    <p>Active Events</p>
+                    <div class="stat-number" th:text="${totalEvents}">0</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon cyan">🎓</div>
+                <div class="stat-info">
+                    <p>Total Students</p>
+                    <div class="stat-number" th:text="${totalStudents}">0</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon amber">💰</div>
+                <div class="stat-info">
+                    <p>Total Revenue</p>
+                    <div class="stat-number">₹<span th:text="${totalRevenue}">0</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Quick Actions -->
     <div class="section-label">Management Modules</div>
     <div class="actions-grid">
@@ -80,6 +108,12 @@
             <h3>Manage Students</h3>
             <p>Register participants, track departments and roll numbers.</p>
             <div class="action-arrow">View Students →</div>
+        </a>
+        <a sec:authorize="hasRole('ADMIN')" href="/web/admin/payments" class="action-card">
+            <div class="action-icon" style="background:rgba(6,182,212,0.15);">💰</div>
+            <h3>Financial Overview</h3>
+            <p>Monitor registration fees, transaction logs and total revenue.</p>
+            <div class="action-arrow">View Payments →</div>
         </a>
         <a sec:authorize="hasRole('ADMIN')" href="/web/api-tests" class="action-card">
             <div class="action-icon" style="background:rgba(99,102,241,0.15);">🧪</div>

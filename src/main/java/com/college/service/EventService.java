@@ -28,13 +28,14 @@ public class EventService {
     @Transactional
     public void deleteEvent(Integer id) {
         // Drop dependent records safely to bypass Foreign Key constraints
-        try { jdbcTemplate.update("DELETE FROM event_registrations WHERE event_id = ?", id); } catch (Exception e) {}
-        try { jdbcTemplate.update("DELETE FROM Payments WHERE event_id = ?", id); } catch (Exception e) {}
-        try { jdbcTemplate.update("DELETE FROM Certificates WHERE event_id = ?", id); } catch (Exception e) {}
-        try { jdbcTemplate.update("DELETE FROM Feedbacks WHERE event_id = ?", id); } catch (Exception e) {}
-        try { jdbcTemplate.update("DELETE FROM Event_Participants WHERE event_id = ?", id); } catch (Exception e) {}
-        try { jdbcTemplate.update("DELETE FROM Coordinator_Events WHERE event_id = ?", id); } catch (Exception e) {}
-        try { jdbcTemplate.update("DELETE FROM Admin_Events WHERE event_id = ?", id); } catch (Exception e) {}
+        // Using lowercase snake_case table names as per the actual database schema
+        jdbcTemplate.update("DELETE FROM event_registrations WHERE event_id = ?", id);
+        jdbcTemplate.update("DELETE FROM payments WHERE event_id = ?", id);
+        jdbcTemplate.update("DELETE FROM certificates WHERE event_id = ?", id);
+        jdbcTemplate.update("DELETE FROM feedbacks WHERE event_id = ?", id);
+        jdbcTemplate.update("DELETE FROM event_participants WHERE event_id = ?", id);
+        jdbcTemplate.update("DELETE FROM coordinator_events WHERE event_id = ?", id);
+        jdbcTemplate.update("DELETE FROM admin_events WHERE event_id = ?", id);
         
         eventRepository.deleteById(id);
     }

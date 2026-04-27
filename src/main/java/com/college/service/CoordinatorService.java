@@ -35,7 +35,8 @@ public class CoordinatorService {
         
         // 1. Manually clear link tables using JDBC to be 100% sure
         try { 
-            int rows = jdbcTemplate.update("DELETE FROM Coordinator_Events WHERE coordinator_id = ?", id);
+            // Using lowercase snake_case table names as per the actual database schema
+            int rows = jdbcTemplate.update("DELETE FROM coordinator_events WHERE coordinator_id = ?", id);
             System.out.println(">>> Cleared " + rows + " assignment records.");
         } catch (Exception e) {
             System.err.println(">>> Error clearing assignments: " + e.getMessage());
@@ -54,14 +55,14 @@ public class CoordinatorService {
     
     @Transactional
     public void assignCoordinatorToEvent(Integer coordId, Integer eventId) {
-        jdbcTemplate.update("INSERT IGNORE INTO Coordinator_Events (coordinator_id, event_id) VALUES (?, ?)", coordId, eventId);
+        jdbcTemplate.update("INSERT IGNORE INTO coordinator_events (coordinator_id, event_id) VALUES (?, ?)", coordId, eventId);
     }
 
     public List<Map<String, Object>> getCoordinatorAssignments() {
         String sql = "SELECT c.name as coordinatorName, e.name as eventName " +
-                     "FROM Coordinator_Events ce " +
-                     "JOIN Coordinators c ON ce.coordinator_id = c.coordinator_id " +
-                     "JOIN Events e ON ce.event_id = e.event_id";
+                     "FROM coordinator_events ce " +
+                     "JOIN coordinators c ON ce.coordinator_id = c.coordinator_id " +
+                     "JOIN events e ON ce.event_id = e.event_id";
         return jdbcTemplate.queryForList(sql);
     }
 }

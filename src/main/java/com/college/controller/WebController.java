@@ -6,6 +6,8 @@ import com.college.entity.Student;
 import com.college.service.EventService;
 import com.college.service.CoordinatorService;
 import com.college.service.StudentService;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -68,7 +70,19 @@ public class WebController {
 
     // -------- Home --------
     @GetMapping
-    public String index() {
+    public String index(Model model, Principal principal) {
+        if (principal != null) {
+            Student user = studentRepository.findByEmail(principal.getName()).orElse(null);
+            if (user != null && user.getRole().equals("ADMIN")) {
+                // Fetch stats for Admin Dashboard
+                model.addAttribute("totalEvents", eventService.getAllEvents().size());
+                model.addAttribute("totalStudents", studentService.getAllStudents().size());
+                model.addAttribute("totalRegistrations", registrationRepository.count());
+                
+                Long revenue = paymentRepository.getTotalRevenue();
+                model.addAttribute("totalRevenue", revenue != null ? revenue : 0);
+            }
+        }
         return "index";
     }
 
@@ -425,5 +439,12 @@ public class WebController {
     public String viewApiTests(Model model) {
         model.addAttribute("executionTime", java.time.LocalDateTime.now());
         return "api-tests";
+    }
+
+    @GetMapping("/admin/payments")
+    @PreAuthorize("hasRole('ADMIN')")
+    public String adminPayments(Model model) {
+        model.addAttribute("payments", paymentRepository.findAll());
+        return "admin-payments";
     }
 }

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Financial Overview - CE</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar">
+    <a href="/web" class="navbar-brand">
+        <div class="navbar-logo">CE</div>
+        <span class="navbar-title">College <span>Events</span></span>
+    </a>
+    <div class="navbar-links">
+        <a href="/web" class="nav-link">Dashboard</a>
+        <a href="/web/events" class="nav-link">Events</a>
+        <a href="/web/students" class="nav-link">Students</a>
+        <a href="/web/admin/payments" class="nav-link active">Payments</a>
+        <div class="divider-v" style="width:1px; height:20px; background:var(--glass-border); margin:0 10px;"></div>
+        <a href="/logout" class="btn btn-danger btn-sm">Logout</a>
+    </div>
+</nav>
+
+<div class="page-wrapper">
+    <div class="page-header">
+        <div class="breadcrumb"><a href="/web">Dashboard</a> / Payments</div>
+        <h1>Financial Overview</h1>
+        <p>Monitor all registration fees and transaction statuses across the system.</p>
+    </div>
+
+    <div class="card">
+        <div class="section-label">Transaction Logs</div>
+        
+        <div th:if="${#lists.isEmpty(payments)}" class="empty-state">
+            <div class="empty-icon">💸</div>
+            <p>No payments recorded yet.</p>
+        </div>
+
+        <div th:if="${not #lists.isEmpty(payments)}" class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Payment ID</th>
+                        <th>Student Name</th>
+                        <th>Event</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="p : ${payments}">
+                        <td class="td-id" th:text="${p.paymentId}">001</td>
+                        <td style="font-weight: 600;" th:text="${p.student != null ? p.student.name : 'Unknown'}">Student Name</td>
+                        <td th:text="${p.event != null ? p.event.name : 'Unknown Event'}">Event Name</td>
+                        <td style="color: var(--color-success); font-weight: 700;">₹<span th:text="${p.amount}">0</span></td>
+                        <td>
+                            <span th:if="${p.paymentStatus == 'SUCCESS'}" class="badge badge-green">SUCCESS</span>
+                            <span th:if="${p.paymentStatus == 'PENDING'}" class="badge badge-orange">PENDING</span>
+                            <span th:if="${p.paymentStatus == 'FAILED'}" class="badge badge-danger">FAILED</span>
+                        </td>
+                        <td th:text="${p.paymentDate}">2023-10-01</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <div class="form-actions" style="margin-top: 30px;">
+        <a href="/web" class="btn btn-ghost">← Back to Dashboard</a>
+    </div>
+</div>
+
+</body>
+</html>
