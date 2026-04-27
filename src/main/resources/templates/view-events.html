@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Events — College Event Management</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<nav class="navbar" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+    <a href="/web" class="navbar-brand">
+        <div class="navbar-logo">CE</div>
+        <span class="navbar-title">College <span>Events</span></span>
+    </a>
+    <div class="navbar-links">
+        <a href="/web/events" class="nav-link active">Events</a>
+        <a sec:authorize="hasRole('PARTICIPANT')" href="/web/my-events" class="nav-link">My Events</a>
+        <a sec:authorize="hasRole('ADMIN')" href="/web/students" class="nav-link">Students</a>
+        <a sec:authorize="hasRole('ADMIN')" href="/web/coordinators" class="nav-link">Coordinators</a>
+        <a sec:authorize="hasRole('ADMIN')" href="/web/admin/registrations" class="nav-link">Certificates</a>
+        <a sec:authorize="hasRole('ADMIN')" href="/web/assignments" class="nav-link nav-pill">Assignments</a>
+        <div class="divider-v" style="width:1px; height:20px; background:var(--glass-border); margin:0 10px;"></div>
+        <a href="/logout" class="btn btn-danger btn-sm">Logout</a>
+    </div>
+</nav>
+
+<div class="page-wrapper">
+    <div class="page-header">
+        <div class="breadcrumb">
+            <a href="/web">Home</a> / Events
+        </div>
+        <h1>🎪 College Events</h1>
+        <p>Manage all scheduled events — create, edit or remove entries below.</p>
+        <div class="page-actions" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+            <a sec:authorize="hasRole('ADMIN')" href="/web/events/add" class="btn btn-primary">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
+                Add New Event
+            </a>
+            <a href="/web" class="btn btn-ghost">← Back Home</a>
+        </div>
+    </div>
+
+    <!-- Flash Messages -->
+    <div th:if="${success}" class="alert alert-success">
+        <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l5-5z"></path></svg>
+        <span th:text="${success}"></span>
+    </div>
+    <div th:if="${error}" class="alert alert-error">
+        <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"></path></svg>
+        <span th:text="${error}"></span>
+    </div>
+
+    <div class="card" style="padding:0;">
+        <div th:if="${#lists.isEmpty(events)}" class="empty-state">
+            <div class="empty-icon">📭</div>
+            <p>No events found.<br>Click <strong>Add New Event</strong> to get started.</p>
+        </div>
+        <div class="table-wrapper" th:if="${not #lists.isEmpty(events)}">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Event ID</th>
+                        <th>Event Name</th>
+                        <th>Type</th>
+                        <th>Date</th>
+                        <th>Time</th>
+                        <th>Venue</th>
+                        <th>Fee (₹)</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="event : ${events}" style="animation: fadeUp 0.4s ease both;">
+                        <td><span class="td-id" th:text="${event.eventId}"></span></td>
+                        <td style="font-weight:600;" th:text="${event.name}"></td>
+                        <td><span class="badge badge-purple" th:text="${event.type}"></span></td>
+                        <td th:text="${event.date}"></td>
+                        <td th:text="${event.time}"></td>
+                        <td th:text="${event.venue}"></td>
+                        <td style="font-weight:600; color: #10b981;" th:text="'₹' + ${event.fee}"></td>
+                        <td>
+                            <div class="td-actions" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+                                <!-- Participant Join Button -->
+                                <div sec:authorize="hasRole('PARTICIPANT')">
+                                    <span th:if="${registeredIds != null and #lists.contains(registeredIds, event.eventId)}" 
+                                          class="badge badge-green" style="padding: 8px 16px;">✓ Registered</span>
+                                    <a th:if="${registeredIds == null or not #lists.contains(registeredIds, event.eventId)}" 
+                                       th:href="@{/web/events/join/{id}(id=${event.eventId})}" class="btn btn-primary btn-sm">🎟️ Register</a>
+                                </div>
+                                
+                                <!-- Admin Edit/Delete Buttons -->
+                                <a sec:authorize="hasRole('ADMIN')" th:href="@{/web/events/edit/{id}(id=${event.eventId})}" class="btn btn-ghost btn-sm">✏️ Edit</a>
+                                <a sec:authorize="hasRole('ADMIN')" th:href="@{/web/events/delete/{id}(id=${event.eventId})}" class="btn btn-danger btn-sm"
+                                   onclick="return confirm('Delete this event permanently?')">🗑 Delete</a>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

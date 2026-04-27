@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register Event - College Event Management</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<nav class="navbar">
+    <a href="/web" class="navbar-brand">
+        <div class="navbar-logo">CE</div>
+        <span class="navbar-title">College <span>Events</span></span>
+    </a>
+</nav>
+
+<div class="page-wrapper narrow">
+    <div class="page-header">
+        <div class="breadcrumb"><a href="/web/events">Events</a> / Register</div>
+        <h1 th:text="'Register for ' + ${event.name}">Register Event</h1>
+        <p>Complete the payment to confirm your participation.</p>
+    </div>
+
+    <div class="card">
+        <div class="form-group" style="margin-bottom: 24px;">
+            <label>Event Details</label>
+            <div style="background: rgba(255,255,255,0.03); padding: 20px; border-radius: 12px; border: 1px solid var(--glass-border);">
+                <p style="margin-bottom: 8px;"><strong>Venue:</strong> <span th:text="${event.venue}"></span></p>
+                <p style="margin-bottom: 8px;"><strong>Date:</strong> <span th:text="${event.date}"></span> at <span th:text="${event.time}"></span></p>
+                <p><strong>Registration Fee:</strong> <span style="color: var(--color-success); font-weight: 700;" th:text="'₹' + ${event.fee}"></span></p>
+            </div>
+        </div>
+
+        <form th:action="@{/web/events/join/{id}(id=${event.eventId})}" method="post">
+            <div class="form-group" style="margin-bottom: 24px;">
+                <label>Simulated Payment</label>
+                <p style="font-size: 0.85rem; color: var(--color-muted); margin-bottom: 12px;">Since this is a demo, clicking 'Pay & Confirm' will simulate a successful transaction.</p>
+                <div class="form-group">
+                    <label for="card">Card Number (Mock)</label>
+                    <input type="text" id="card" placeholder="XXXX XXXX XXXX 1234" disabled value="**** **** **** 5678">
+                </div>
+            </div>
+            
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary btn-lg" style="width: 100%;">Pay ₹<span th:text="${event.fee}"></span> & Confirm Registration</button>
+                <a href="/web/events" class="btn btn-ghost" style="width:100%;">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+</body>
+</html>

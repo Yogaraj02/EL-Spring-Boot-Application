@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Event — College Event Management</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<nav class="navbar">
+    <a href="/web" class="navbar-brand">
+        <div class="navbar-logo">CE</div>
+        <span class="navbar-title">College <span>Events</span></span>
+    </a>
+    <div class="navbar-links">
+        <a href="/web/events" class="nav-link active">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+            Events
+        </a>
+        <a href="/web/coordinators" class="nav-link">Coordinators</a>
+        <a href="/web/assignments" class="nav-link nav-pill">Assignments</a>
+    </div>
+</nav>
+
+<div class="page-wrapper narrow">
+    <div class="page-header">
+        <div class="breadcrumb">
+            <a href="/web">Home</a> / <a href="/web/events">Events</a> / Add
+        </div>
+        <h1>✨ Add New Event</h1>
+        <p>Fill in the event details below. All fields are required.</p>
+    </div>
+
+    <div class="card" style="animation: fadeUp 0.4s ease both;">
+        <form th:action="@{/web/events/add}" method="post" style="display:flex; flex-direction:column; gap:20px;">
+
+            <div class="form-group">
+                <label for="name">Event Name</label>
+                <input type="text" id="name" name="name" required placeholder="e.g. Annual Tech Fest 2026">
+            </div>
+
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="type">Event Type</label>
+                    <input type="text" id="type" name="type" required placeholder="Cultural, Technical, Sports…">
+                </div>
+                <div class="form-group">
+                    <label for="venue">Venue</label>
+                    <input type="text" id="venue" name="venue" required placeholder="e.g. Main Auditorium">
+                </div>
+            </div>
+
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="date">Date (DD-MM-YYYY)</label>
+                    <input type="text" id="date" name="date" required placeholder="e.g. 25-12-2026">
+                </div>
+                <div class="form-group">
+                    <label for="time">Time</label>
+                    <input type="text" id="time" name="time" required placeholder="e.g. 10:00 AM">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="fee">Entry Fee (₹)</label>
+                <input type="number" id="fee" name="fee" required placeholder="e.g. 150" min="0">
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-warning btn-lg">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width:16px;height:16px;"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
+                    Save Event
+                </button>
+                <a href="/web/events" class="btn btn-ghost btn-lg">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+</body>
+</html>

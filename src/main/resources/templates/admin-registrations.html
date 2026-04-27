@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Certificates - College Event Management</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<nav class="navbar">
+    <a href="/web" class="navbar-brand">
+        <div class="navbar-logo">CE</div>
+        <span class="navbar-title">College <span>Events</span></span>
+    </a>
+    <div class="navbar-links">
+        <a href="/web/events" class="nav-link">Events</a>
+        <a href="/web/students" class="nav-link">Students</a>
+        <a href="/web/admin/registrations" class="nav-link active">Certificates</a>
+        <div class="divider-v" style="width:1px; height:20px; background:var(--glass-border); margin:0 10px;"></div>
+        <a href="/logout" class="btn btn-danger btn-sm">Logout</a>
+    </div>
+</nav>
+
+<div class="page-wrapper">
+    <div class="page-header">
+        <div class="breadcrumb"><a href="/web">Home</a> / Certificates</div>
+        <h1>Issue Certificates</h1>
+        <p>Review event participants and award certificates for participation or winning.</p>
+    </div>
+
+    <!-- Flash Messages -->
+    <div th:if="${success}" class="alert alert-success">
+        <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l5-5z"></path></svg>
+        <span th:text="${success}"></span>
+    </div>
+
+    <div class="card" style="padding:0;">
+        <div th:if="${#lists.isEmpty(registrations)}" class="empty-state">
+            <div class="empty-icon">📊</div>
+            <p>No registrations found yet.</p>
+        </div>
+        
+        <div class="table-wrapper" th:if="${not #lists.isEmpty(registrations)}">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Participant</th>
+                        <th>Event</th>
+                        <th>Status</th>
+                        <th>Issue Certificate</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="reg : ${registrations}">
+                        <td>
+                            <div style="font-weight: 700;" th:text="${reg.student.name}">Student Name</div>
+                            <div style="font-size: 0.75rem; color: var(--color-muted);" th:text="${reg.student.rollNo}">Roll No</div>
+                        </td>
+                        <td>
+                            <div style="font-weight: 600;" th:text="${reg.event.name}">Event Name</div>
+                            <div style="font-size: 0.75rem; color: var(--color-muted);" th:text="${reg.event.date}">Date</div>
+                        </td>
+                        <td>
+                            <span class="badge" th:classappend="${reg.status == 'COMPLETED' ? 'badge-blue' : 'badge-green'}" th:text="${reg.status}">STATUS</span>
+                        </td>
+                        <td>
+                            <div th:if="${reg.certificateType == null}" style="display: flex; gap: 8px;">
+                                <form th:action="@{/web/admin/certify/{id}(id=${reg.id})}" method="post">
+                                    <input type="hidden" name="type" value="PARTICIPANT">
+                                    <button type="submit" class="btn btn-ghost btn-sm">📜 Participant</button>
+                                </form>
+                                <form th:action="@{/web/admin/certify/{id}(id=${reg.id})}" method="post">
+                                    <input type="hidden" name="type" value="WINNER">
+                                    <button type="submit" class="btn btn-warning btn-sm">🏆 Winner</button>
+                                </form>
+                            </div>
+                            <div th:if="${reg.certificateType != null}">
+                                <span class="badge badge-purple" th:text="${reg.certificateType + ' ISSUED'}"></span>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

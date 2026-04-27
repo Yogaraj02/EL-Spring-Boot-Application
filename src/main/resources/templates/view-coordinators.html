@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coordinators — College Event Management</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<nav class="navbar">
+    <a href="/web" class="navbar-brand">
+        <div class="navbar-logo">CE</div>
+        <span class="navbar-title">College <span>Events</span></span>
+    </a>
+    <div class="navbar-links">
+        <a href="/web/events" class="nav-link">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+            Events
+        </a>
+        <a href="/web/coordinators" class="nav-link active">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0"/></svg>
+            Coordinators
+        </a>
+        <a href="/web/assignments" class="nav-link nav-pill">Assignments</a>
+    </div>
+</nav>
+
+<div class="page-wrapper">
+    <div class="page-header">
+        <div class="breadcrumb">
+            <a href="/web">Home</a> / Coordinators
+        </div>
+        <h1>👥 Coordinators</h1>
+        <p>All registered event coordinators — manage profiles and contact details here.</p>
+        <div class="page-actions">
+            <a href="/web/coordinators/add" class="btn btn-info">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
+                Add Coordinator
+            </a>
+            <a href="/web" class="btn btn-ghost">← Back Home</a>
+        </div>
+    </div>
+
+    <!-- Flash Messages -->
+    <div th:if="${success}" class="alert alert-success">
+        <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l5-5z"></path></svg>
+        <span th:text="${success}"></span>
+    </div>
+    <div th:if="${error}" class="alert alert-error">
+        <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"></path></svg>
+        <span th:text="${error}"></span>
+    </div>
+
+    <div class="card" style="padding:0;">
+        <div th:if="${#lists.isEmpty(coordinators)}" class="empty-state">
+            <div class="empty-icon">👤</div>
+            <p>No coordinators registered yet.<br>Click <strong>Add Coordinator</strong> to begin.</p>
+        </div>
+        <div class="table-wrapper" th:if="${not #lists.isEmpty(coordinators)}">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Department</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="c : ${coordinators}" style="animation: fadeUp 0.4s ease both;">
+                        <td><span class="td-id" th:text="${c.coordinatorId}"></span></td>
+                        <td>
+                            <div style="display:flex; align-items:center; gap:10px;">
+                                <div style="width:34px; height:34px; border-radius:50%; background:linear-gradient(135deg, #6366f1, #06b6d4);
+                                    display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:700; color:#fff; flex-shrink:0;"
+                                    th:text="${#strings.substring(c.name, 0, 1)}"></div>
+                                <span style="font-weight:600;" th:text="${c.name}"></span>
+                            </div>
+                        </td>
+                        <td><span class="badge badge-blue" th:text="${c.department}"></span></td>
+                        <td style="color: var(--color-muted);" th:text="${c.email}"></td>
+                        <td style="color: var(--color-muted);" th:text="${c.phone}"></td>
+                        <td>
+                            <div class="td-actions">
+                                <a th:href="@{/web/coordinators/edit/{id}(id=${c.coordinatorId})}" class="btn btn-ghost btn-sm">✏️ Edit</a>
+                                <a th:href="@{/web/coordinators/delete/{id}(id=${c.coordinatorId})}" class="btn btn-danger btn-sm"
+                                   onclick="return confirm('Remove this coordinator?')">🗑 Delete</a>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

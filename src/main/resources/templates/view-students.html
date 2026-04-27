@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Students — College Event Management</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<nav class="navbar">
+    <a href="/web" class="navbar-brand">
+        <div class="navbar-logo">CE</div>
+        <span class="navbar-title">College <span>Events</span></span>
+    </a>
+    <div class="navbar-links">
+        <a href="/web/events" class="nav-link">Events</a>
+        <a href="/web/students" class="nav-link active">Students</a>
+        <a href="/web/coordinators" class="nav-link">Coordinators</a>
+        <a href="/web/assignments" class="nav-link nav-pill">Assignments</a>
+    </div>
+</nav>
+
+<div class="page-wrapper">
+    <div class="page-header">
+        <div class="breadcrumb">
+            <a href="/web">Home</a> / Students
+        </div>
+        <h1>🎓 Students List</h1>
+        <p>Manage participants registration and academic details.</p>
+        <div class="page-actions">
+            <a href="/web/students/add" class="btn btn-success">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
+                Register Student
+            </a>
+            <a href="/web" class="btn btn-ghost">← Back Home</a>
+        </div>
+    </div>
+
+    <!-- Flash Messages -->
+    <div th:if="${success}" class="alert alert-success">
+        <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l5-5z"></path></svg>
+        <span th:text="${success}"></span>
+    </div>
+
+    <div class="card" style="padding:0;">
+        <div th:if="${#lists.isEmpty(students)}" class="empty-state">
+            <div class="empty-icon">🎓</div>
+            <p>No students registered yet.<br>Click <strong>Register Student</strong> to begin.</p>
+        </div>
+        <div class="table-wrapper" th:if="${not #lists.isEmpty(students)}">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Roll Number</th>
+                        <th>Department</th>
+                        <th>Email</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="s : ${students}" style="animation: fadeUp 0.4s ease both;">
+                        <td><span class="td-id" th:text="${s.id}"></span></td>
+                        <td>
+                            <div style="display:flex; align-items:center; gap:10px;">
+                                <div style="width:34px; height:34px; border-radius:50%; background:linear-gradient(135deg, #10b981, #06b6d4);
+                                    display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:700; color:#fff; flex-shrink:0;"
+                                    th:text="${#strings.substring(s.name, 0, 1)}"></div>
+                                <span style="font-weight:600;" th:text="${s.name}"></span>
+                            </div>
+                        </td>
+                        <td th:text="${s.rollNo}"></td>
+                        <td><span class="badge badge-blue" th:text="${s.department}"></span></td>
+                        <td style="color: var(--color-muted);" th:text="${s.email}"></td>
+                        <td>
+                            <div class="td-actions">
+                                <a th:href="@{/web/students/edit/{id}(id=${s.id})}" class="btn btn-ghost btn-sm">✏️</a>
+                                <a th:href="@{/web/students/delete/{id}(id=${s.id})}" class="btn btn-danger btn-sm"
+                                   onclick="return confirm('Remove this student?')">🗑</a>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Coordinator — College Event Management</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<nav class="navbar">
+    <a href="/web" class="navbar-brand">
+        <div class="navbar-logo">CE</div>
+        <span class="navbar-title">College <span>Events</span></span>
+    </a>
+    <div class="navbar-links">
+        <a href="/web/events" class="nav-link">Events</a>
+        <a href="/web/coordinators" class="nav-link active">Coordinators</a>
+        <a href="/web/assignments" class="nav-link nav-pill">Assignments</a>
+    </div>
+</nav>
+
+<div class="page-wrapper narrow">
+    <div class="page-header">
+        <div class="breadcrumb">
+            <a href="/web">Home</a> / <a href="/web/coordinators">Coordinators</a> / Add
+        </div>
+        <h1>👤 Add Coordinator</h1>
+        <p>Register a new coordinator who can be assigned to manage events.</p>
+    </div>
+
+    <div class="card" style="animation: fadeUp 0.4s ease both;">
+        <form th:action="@{/web/coordinators/add}" method="post"
+              style="display:flex; flex-direction:column; gap:20px;">
+
+            <div class="form-group">
+                <label for="name">Full Name</label>
+                <input type="text" id="name" name="name" required placeholder="e.g. Dr. Ramesh Kumar">
+            </div>
+
+            <div class="form-group">
+                <label for="department">Department</label>
+                <input type="text" id="department" name="department" required placeholder="e.g. Computer Science">
+            </div>
+
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" name="email" required placeholder="e.g. ramesh@college.edu">
+                </div>
+                <div class="form-group">
+                    <label for="phone">Phone Number</label>
+                    <input type="tel" id="phone" name="phone" required placeholder="e.g. +91 9876543210">
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-info btn-lg">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width:16px;height:16px;"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
+                    Save Coordinator
+                </button>
+                <a href="/web/coordinators" class="btn btn-ghost btn-lg">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+</body>
+</html>

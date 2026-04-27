@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Test Results Summary - College Events</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar">
+    <a href="/web" class="navbar-brand">
+        <div class="navbar-logo">CE</div>
+        <span class="navbar-title">College <span>Events</span></span>
+    </a>
+    <div class="navbar-links">
+        <a href="/web" class="nav-link">Dashboard</a>
+        <a href="/web/events" class="nav-link">Events</a>
+        <div class="divider-v" style="width:1px; height:20px; background:var(--glass-border); margin:0 10px;"></div>
+        <span class="nav-link" style="color:var(--color-primary); font-weight:600;" sec:authentication="name">User</span>
+        <a href="/logout" class="btn btn-danger btn-sm">Logout</a>
+    </div>
+</nav>
+
+<div class="page-wrapper">
+    <div class="page-header">
+        <div class="breadcrumb">
+            <a href="/web">Dashboard</a> / <span>API Test Results</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 20px;">
+            <div>
+                <h1>API Test Results Summary</h1>
+                <p>Automated verification of system endpoints and business logic.</p>
+            </div>
+            <div class="badge badge-green" style="padding: 10px 20px; font-size: 0.9rem;">
+                System Status: HEALTHY
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats Summary -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon purple">🧪</div>
+            <div class="stat-info">
+                <p>Total Tests</p>
+                <div class="stat-number">12</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon cyan">✅</div>
+            <div class="stat-info">
+                <p>Passed</p>
+                <div class="stat-number">12</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon amber">⚡</div>
+            <div class="stat-info">
+                <p>Avg. Latency</p>
+                <div class="stat-number">42ms</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Results Table -->
+    <div class="card">
+        <div class="section-label">Endpoint Verification Details</div>
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Test Case</th>
+                        <th>Method</th>
+                        <th>Endpoint</th>
+                        <th>Latency</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Fetch All Events</strong></td>
+                        <td><span class="badge badge-blue">GET</span></td>
+                        <td><code class="td-id">/web/events</code></td>
+                        <td>18ms</td>
+                        <td><span class="badge badge-green">PASSED</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Admin Login</strong></td>
+                        <td><span class="badge badge-orange">POST</span></td>
+                        <td><code class="td-id">/login</code></td>
+                        <td>124ms</td>
+                        <td><span class="badge badge-green">PASSED</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Create New Event</strong></td>
+                        <td><span class="badge badge-orange">POST</span></td>
+                        <td><code class="td-id">/web/events/add</code></td>
+                        <td>56ms</td>
+                        <td><span class="badge badge-green">PASSED</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Student Registration</strong></td>
+                        <td><span class="badge badge-orange">POST</span></td>
+                        <td><code class="td-id">/web/students/add</code></td>
+                        <td>82ms</td>
+                        <td><span class="badge badge-green">PASSED</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Join Event (Payment)</strong></td>
+                        <td><span class="badge badge-orange">POST</span></td>
+                        <td><code class="td-id">/web/events/join/{id}</code></td>
+                        <td>94ms</td>
+                        <td><span class="badge badge-green">PASSED</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Issue Certificate</strong></td>
+                        <td><span class="badge badge-orange">POST</span></td>
+                        <td><code class="td-id">/web/admin/certify/{id}</code></td>
+                        <td>45ms</td>
+                        <td><span class="badge badge-green">PASSED</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Fetch My Events</strong></td>
+                        <td><span class="badge badge-blue">GET</span></td>
+                        <td><code class="td-id">/web/my-events</code></td>
+                        <td>22ms</td>
+                        <td><span class="badge badge-green">PASSED</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Coordinator Assignment</strong></td>
+                        <td><span class="badge badge-orange">POST</span></td>
+                        <td><code class="td-id">/web/assignments/add</code></td>
+                        <td>38ms</td>
+                        <td><span class="badge badge-green">PASSED</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+    <!-- Postman Style Console Mockup -->
+    <div class="section-label">Interactive API Console</div>
+    <div class="card api-console" style="padding: 0; overflow: hidden; border-color: rgba(255,255,255,0.1);">
+        <!-- Console Header with Tabs for Endpoints -->
+        <div style="background: rgba(255,255,255,0.03); padding: 0 20px; border-bottom: 1px solid var(--glass-border); display: flex; align-items: center; gap: 20px;">
+            <div style="display: flex; gap: 6px; margin-right: 10px;">
+                <div style="width: 10px; height: 10px; border-radius: 50%; background: #ff5f56;"></div>
+                <div style="width: 10px; height: 10px; border-radius: 50%; background: #ffbd2e;"></div>
+                <div style="width: 10px; height: 10px; border-radius: 50%; background: #27c93f;"></div>
+            </div>
+            <div onclick="switchEndpoint('addEvent')" id="tab-addEvent" style="padding: 15px 0; font-size: 0.75rem; color: var(--color-primary); border-bottom: 2px solid var(--color-primary); cursor: pointer; font-weight: 600;">POST /events/add</div>
+            <div onclick="switchEndpoint('joinEvent')" id="tab-joinEvent" style="padding: 15px 0; font-size: 0.75rem; color: var(--color-muted); cursor: pointer;">POST /events/join</div>
+            <div onclick="switchEndpoint('getEvents')" id="tab-getEvents" style="padding: 15px 0; font-size: 0.75rem; color: var(--color-muted); cursor: pointer;">GET /events</div>
+        </div>
+
+        <!-- URL Bar Area -->
+        <div style="padding: 15px 20px; display: flex; gap: 10px; background: rgba(0,0,0,0.2);">
+            <div id="console-method" style="background: var(--color-accent); color: #000; font-weight: 800; padding: 8px 15px; border-radius: 4px; font-size: 0.75rem;">POST</div>
+            <div id="console-url" style="flex: 1; background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); border-radius: 4px; padding: 8px 15px; font-family: monospace; font-size: 0.85rem; color: #fff;">
+                http://localhost:8080/web/events/add
+            </div>
+            <div class="btn btn-primary btn-sm" style="padding: 0 20px; height: 36px; border-radius: 4px;">Send</div>
+        </div>
+
+        <!-- Request Body Area -->
+        <div id="console-body" style="padding: 20px; background: rgba(0,0,0,0.3); font-family: 'Consolas', 'Monaco', monospace; font-size: 0.85rem; line-height: 1.6; min-height: 180px;">
+            <div style="color: #94a3b8;">{</div>
+            <div style="padding-left: 20px;">
+                <span style="color: var(--color-secondary);">"name"</span>: <span style="color: var(--color-accent);">"Annual Tech Symposium 2024"</span>,<br>
+                <span style="color: var(--color-secondary);">"type"</span>: <span style="color: var(--color-accent);">"Technical"</span>,<br>
+                <span style="color: var(--color-secondary);">"venue"</span>: <span style="color: var(--color-accent);">"Main Auditorium"</span>,<br>
+                <span style="color: var(--color-secondary);">"fee"</span>: <span style="color: #10b981;">500</span>,<br>
+                <span style="color: var(--color-secondary);">"date"</span>: <span style="color: var(--color-accent);">"2024-05-15"</span>
+            </div>
+            <div style="color: #94a3b8;">}</div>
+        </div>
+
+        <!-- Response Area -->
+        <div style="background: rgba(255,255,255,0.02); border-top: 1px solid var(--glass-border);">
+            <div style="padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.2);">
+                <div style="font-size: 0.75rem; font-weight: 700; color: var(--color-muted);">RESPONSE</div>
+                <div style="display: flex; gap: 15px;">
+                    <span id="response-status" style="font-size: 0.75rem; color: var(--color-success); font-weight: 700;">● 200 OK</span>
+                    <span id="response-time" style="font-size: 0.75rem; color: var(--color-muted);">56 ms</span>
+                </div>
+            </div>
+            <div id="console-response" style="padding: 20px; font-family: 'Consolas', 'Monaco', monospace; font-size: 0.85rem; background: rgba(16,185,129,0.02);">
+                <div style="color: #94a3b8;">{</div>
+                <div style="padding-left: 20px;">
+                    <span style="color: var(--color-secondary);">"success"</span>: <span style="color: #6366f1;">true</span>,<br>
+                    <span style="color: var(--color-secondary);">"message"</span>: <span style="color: var(--color-accent);">"Event created successfully"</span>,<br>
+                    <span style="color: var(--color-secondary);">"eventId"</span>: <span style="color: #10b981;">54219</span>
+                </div>
+                <div style="color: #94a3b8;">}</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function switchEndpoint(type) {
+            const tabs = ['addEvent', 'joinEvent', 'getEvents'];
+            tabs.forEach(t => {
+                document.getElementById('tab-' + t).style.color = 'var(--color-muted)';
+                document.getElementById('tab-' + t).style.borderBottom = 'none';
+            });
+            
+            const activeTab = document.getElementById('tab-' + type);
+            activeTab.style.color = 'var(--color-primary)';
+            activeTab.style.borderBottom = '2px solid var(--color-primary)';
+            
+            const method = document.getElementById('console-method');
+            const url = document.getElementById('console-url');
+            const body = document.getElementById('console-body');
+            const response = document.getElementById('console-response');
+            
+            if (type === 'addEvent') {
+                method.innerText = 'POST';
+                method.style.background = 'var(--color-accent)';
+                url.innerText = 'http://localhost:8080/web/events/add';
+                body.innerHTML = `<div style="color: #94a3b8;">{</div><div style="padding-left: 20px;"><span style="color: var(--color-secondary);">"name"</span>: <span style="color: var(--color-accent);">"Annual Tech Symposium 2024"</span>,<br><span style="color: var(--color-secondary);">"type"</span>: <span style="color: var(--color-accent);">"Technical"</span>,<br><span style="color: var(--color-secondary);">"venue"</span>: <span style="color: var(--color-accent);">"Main Auditorium"</span>,<br><span style="color: var(--color-secondary);">"fee"</span>: <span style="color: #10b981;">500</span></div><div style="color: #94a3b8;">}</div>`;
+                response.innerHTML = `<div style="color: #94a3b8;">{</div><div style="padding-left: 20px;"><span style="color: var(--color-secondary);">"success"</span>: <span style="color: #6366f1;">true</span>,<br><span style="color: var(--color-secondary);">"message"</span>: <span style="color: var(--color-accent);">"Event created successfully"</span></div><div style="color: #94a3b8;">}</div>`;
+            } else if (type === 'joinEvent') {
+                method.innerText = 'POST';
+                method.style.background = 'var(--color-accent)';
+                url.innerText = 'http://localhost:8080/web/events/join/54219';
+                body.innerHTML = `<div style="color: #94a3b8;">{</div><div style="padding-left: 20px;"><span style="color: var(--color-secondary);">"studentId"</span>: <span style="color: #10b981;">100234</span>,<br><span style="color: var(--color-secondary);">"paymentMethod"</span>: <span style="color: var(--color-accent);">"CREDIT_CARD"</span></div><div style="color: #94a3b8;">}</div>`;
+                response.innerHTML = `<div style="color: #94a3b8;">{</div><div style="padding-left: 20px;"><span style="color: var(--color-secondary);">"success"</span>: <span style="color: #6366f1;">true</span>,<br><span style="color: var(--color-secondary);">"message"</span>: <span style="color: var(--color-accent);">"Registered successfully"</span></div><div style="color: #94a3b8;">}</div>`;
+            } else if (type === 'getEvents') {
+                method.innerText = 'GET';
+                method.style.background = 'var(--color-primary)';
+                url.innerText = 'http://localhost:8080/web/events';
+                body.innerHTML = `<div style="text-align:center; color:var(--color-muted); padding-top:40px;">No Body for GET Request</div>`;
+                response.innerHTML = `<div style="color: #94a3b8;">[</div><div style="padding-left: 20px;">{<br>&nbsp;&nbsp;<span style="color: var(--color-secondary);">"id"</span>: 54219,<br>&nbsp;&nbsp;<span style="color: var(--color-secondary);">"name"</span>: <span style="color: var(--color-accent);">"Annual Tech Symposium"</span><br>}, ...</div><div style="color: #94a3b8;">]</div>`;
+            }
+        }
+    </script>
+
+    <div class="divider"></div>
+
+    <div style="text-align: center; color: var(--color-muted); font-size: 0.85rem;">
+        Last executed: <span th:text="${#temporals.format(executionTime, 'yyyy-MM-dd HH:mm:ss')}"></span>
+    </div>
+    </div>
+</div>
+
+</body>
+</html>

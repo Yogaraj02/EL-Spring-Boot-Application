@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>College Event Management System</title>
+    <meta name="description" content="Manage college events, students, coordinators and assignments in one place.">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar">
+    <a href="/web" class="navbar-brand">
+        <div class="navbar-logo">CE</div>
+        <span class="navbar-title">College <span>Events</span></span>
+    </a>
+    <div class="navbar-links">
+        <a href="/web/events" class="nav-link">Events</a>
+        
+        <!-- Participant Only Links -->
+        <a sec:authorize="hasRole('PARTICIPANT')" href="/web/my-events" class="nav-link">My Events</a>
+        
+        <!-- Admin Only Links -->
+        <a sec:authorize="hasRole('ADMIN')" href="/web/students" class="nav-link">Students</a>
+        <a sec:authorize="hasRole('ADMIN')" href="/web/coordinators" class="nav-link">Coordinators</a>
+        <a sec:authorize="hasRole('ADMIN')" href="/web/admin/registrations" class="nav-link">Certificates</a>
+        <a sec:authorize="hasRole('ADMIN')" href="/web/assignments" class="nav-link nav-pill">Assignments</a>
+        
+        <!-- User Info & Logout -->
+        <div class="divider-v" style="width:1px; height:20px; background:var(--glass-border); margin:0 10px;"></div>
+        <span class="nav-link" style="color:var(--color-primary); font-weight:600;" sec:authentication="name">User</span>
+        <a href="/logout" class="btn btn-danger btn-sm">Logout</a>
+    </div>
+</nav>
+
+<!-- Hero -->
+<div class="hero">
+    <div class="hero-badge">🎓 College Event Management System</div>
+    <h1 sec:authorize="hasRole('ADMIN')">Admin Control <br>Center</h1>
+    <h1 sec:authorize="hasRole('PARTICIPANT')">Your Gateway to <br>College Events</h1>
+    <p sec:authorize="hasRole('ADMIN')">Manage events, students, and issue certificates to the winners and participants.</p>
+    <p sec:authorize="hasRole('PARTICIPANT')">Browse upcoming events, register instantly, and track your achievements.</p>
+</div>
+
+<!-- Page Content -->
+<div class="page-wrapper">
+
+    <!-- Flash Messages -->
+    <div th:if="${success}" class="alert alert-success">
+        <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l5-5z" clip-rule="evenodd"></path></svg>
+        <span th:text="${success}"></span>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="section-label">Management Modules</div>
+    <div class="actions-grid">
+        <a href="/web/events" class="action-card">
+            <div class="action-icon" style="background:rgba(99,102,241,0.15);">🎪</div>
+            <h3 sec:authorize="hasRole('ADMIN')">Manage Events</h3>
+            <h3 sec:authorize="hasRole('PARTICIPANT')">Join Events</h3>
+            <p sec:authorize="hasRole('ADMIN')">Schedule, update and oversee all college fests and workshops.</p>
+            <p sec:authorize="hasRole('PARTICIPANT')">Discover exciting contests and workshops happening in your campus.</p>
+            <div class="action-arrow">Browse Now →</div>
+        </a>
+        <a sec:authorize="hasRole('PARTICIPANT')" href="/web/my-events" class="action-card">
+            <div class="action-icon" style="background:rgba(16,185,129,0.15);">🎟️</div>
+            <h3>My Registrations</h3>
+            <p>View the events you've joined and see your certificate status.</p>
+            <div class="action-arrow">View My Events →</div>
+        </a>
+        <a sec:authorize="hasRole('ADMIN')" href="/web/admin/registrations" class="action-card">
+            <div class="action-icon" style="background:rgba(245,158,11,0.15);">📜</div>
+            <h3>Issue Certificates</h3>
+            <p>Approve completions and award Winner or Participant status.</p>
+            <div class="action-arrow">Start Issuing →</div>
+        </a>
+        <a sec:authorize="hasRole('ADMIN')" href="/web/students" class="action-card">
+            <div class="action-icon" style="background:rgba(16,185,129,0.15);">🎓</div>
+            <h3>Manage Students</h3>
+            <p>Register participants, track departments and roll numbers.</p>
+            <div class="action-arrow">View Students →</div>
+        </a>
+        <a sec:authorize="hasRole('ADMIN')" href="/web/api-tests" class="action-card">
+            <div class="action-icon" style="background:rgba(99,102,241,0.15);">🧪</div>
+            <h3>API Test Results</h3>
+            <p>View automated test summary and system health reports.</p>
+            <div class="action-arrow">View Report →</div>
+        </a>
+    </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assignments — College Event Management</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<nav class="navbar">
+    <a href="/web" class="navbar-brand">
+        <div class="navbar-logo">CE</div>
+        <span class="navbar-title">College <span>Events</span></span>
+    </a>
+    <div class="navbar-links">
+        <a href="/web/events" class="nav-link">Events</a>
+        <a href="/web/students" class="nav-link">Students</a>
+        <a href="/web/coordinators" class="nav-link">Coordinators</a>
+        <a href="/web/assignments" class="nav-link active nav-pill">Assignments</a>
+    </div>
+</nav>
+
+<div class="page-wrapper">
+    <div class="page-header">
+        <div class="breadcrumb">
+            <a href="/web">Home</a> / Assignments
+        </div>
+        <h1>🔗 Event Assignments</h1>
+        <p>Connect coordinators to specific college events.</p>
+    </div>
+
+    <!-- Flash Messages -->
+    <div th:if="${success}" class="alert alert-success">
+        <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l5-5z"></path></svg>
+        <span th:text="${success}"></span>
+    </div>
+
+    <div style="display:grid; grid-template-columns: 1fr 2fr; gap:32px; align-items: start;">
+        
+        <!-- Assignment Form -->
+        <div class="card" style="position:sticky; top:24px;">
+            <h3 style="margin-top:0; margin-bottom:16px;">Create Link</h3>
+            <form th:action="@{/web/assignments/add}" method="post" style="display:flex; flex-direction:column; gap:20px;">
+                <div class="form-group">
+                    <label>Select Coordinator</label>
+                    <select name="coordinatorId" required>
+                        <option value="" disabled selected>Choose a coordinator...</option>
+                        <option th:each="c : ${coordinators}" th:value="${c.coordinatorId}" th:text="${c.name}"></option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Select Event</label>
+                    <select name="eventId" required>
+                        <option value="" disabled selected>Choose an event...</option>
+                        <option th:each="e : ${events}" th:value="${e.eventId}" th:text="${e.name}"></option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary">Link Coordinator</button>
+            </form>
+        </div>
+
+        <!-- Assignments Table -->
+        <div class="card" style="padding:0;">
+            <div th:if="${#lists.isEmpty(assignments)}" class="empty-state">
+                <div class="empty-icon">🔗</div>
+                <p>No active assignments.<br>Use the form to link staff to events.</p>
+            </div>
+            <div class="table-wrapper" th:if="${not #lists.isEmpty(assignments)}">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Coordinator</th>
+                            <th>Assigned Event</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="a : ${assignments}" style="animation: fadeUp 0.4s ease both;">
+                            <td>
+                                <div style="font-weight:600;" th:text="${a.coordinatorName}"></div>
+                            </td>
+                            <td>
+                                <div th:text="${a.eventName}"></div>
+                            </td>
+                            <td>
+                                <span class="badge badge-indigo">Active</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+</body>
+</html>

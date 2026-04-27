@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register Student — College Event Management</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<nav class="navbar">
+    <a href="/web" class="navbar-brand">
+        <div class="navbar-logo">CE</div>
+        <span class="navbar-title">College <span>Events</span></span>
+    </a>
+    <div class="navbar-links">
+        <a href="/web/events" class="nav-link">Events</a>
+        <a href="/web/students" class="nav-link active">Students</a>
+        <a href="/web/coordinators" class="nav-link">Coordinators</a>
+        <a href="/web/assignments" class="nav-link nav-pill">Assignments</a>
+    </div>
+</nav>
+
+<div class="page-wrapper narrow">
+    <div class="page-header">
+        <div class="breadcrumb">
+            <a href="/web">Home</a> / <a href="/web/students">Students</a> / Register
+        </div>
+        <h1>📝 Student Registration</h1>
+        <p>Enter student details for event participation.</p>
+    </div>
+
+    <div class="card" style="animation: fadeUp 0.4s ease both;">
+        <form th:action="@{/web/students/add}" method="post" style="display:flex; flex-direction:column; gap:20px;">
+
+            <div class="form-group">
+                <label for="name">Full Name</label>
+                <input type="text" id="name" name="name" required placeholder="e.g. John Doe">
+            </div>
+
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="rollNo">Roll Number</label>
+                    <input type="text" id="rollNo" name="rollNo" required placeholder="e.g. 21CSE001">
+                </div>
+                <div class="form-group">
+                    <label for="department">Department</label>
+                    <input type="text" id="department" name="department" required placeholder="e.g. CSE">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="email">College Email</label>
+                <input type="email" id="email" name="email" required placeholder="e.g. john@college.edu">
+            </div>
+
+            <div class="form-group">
+                <label for="password">Login Password</label>
+                <input type="text" id="password" name="password" required placeholder="Choose a temporary password">
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-success btn-lg">
+                    Register Student
+                </button>
+                <a href="/web/students" class="btn btn-ghost btn-lg">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+</body>
+</html>
