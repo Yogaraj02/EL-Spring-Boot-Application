@@ -14,11 +14,13 @@
         <span class="navbar-title">College <span>Events</span></span>
     </a>
     <div class="navbar-links">
+        <a sec:authorize="hasRole('ADMIN')" href="/web/admin/dashboard" class="nav-link">Dashboard</a>
         <a href="/web/events" class="nav-link active">Events</a>
         <a sec:authorize="hasRole('PARTICIPANT')" href="/web/my-events" class="nav-link">My Events</a>
         <a sec:authorize="hasRole('ADMIN')" href="/web/students" class="nav-link">Students</a>
         <a sec:authorize="hasRole('ADMIN')" href="/web/coordinators" class="nav-link">Coordinators</a>
         <a sec:authorize="hasRole('ADMIN')" href="/web/admin/registrations" class="nav-link">Certificates</a>
+        <a sec:authorize="hasRole('ADMIN')" href="/web/admin/payments" class="nav-link">Payments</a>
         <a sec:authorize="hasRole('ADMIN')" href="/web/assignments" class="nav-link nav-pill">Assignments</a>
         <div class="divider-v" style="width:1px; height:20px; background:var(--glass-border); margin:0 10px;"></div>
         <a href="/logout" class="btn btn-danger btn-sm">Logout</a>

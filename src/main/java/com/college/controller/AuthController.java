@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import com.college.service.EmailService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -20,6 +21,9 @@ public class AuthController {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private EmailService emailService;
 
     @GetMapping("/login")
     public String login() {
@@ -53,8 +57,11 @@ public class AuthController {
         s.setEmail(email);
         s.setPassword(passwordEncoder.encode(password));
         s.setRole("PARTICIPANT");
-        
         studentRepository.save(s);
+        
+        // Send welcome email
+        emailService.sendWelcomeEmail(s.getEmail(), s.getName());
+        
         return "redirect:/login?registered";
     }
 }

@@ -8,16 +8,21 @@
 </head>
 <body>
 
-<nav class="navbar">
+<nav class="navbar" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
     <a href="/web" class="navbar-brand">
         <div class="navbar-logo">CE</div>
         <span class="navbar-title">College <span>Events</span></span>
     </a>
     <div class="navbar-links">
+        <a href="/web/admin/dashboard" class="nav-link">Dashboard</a>
         <a href="/web/events" class="nav-link">Events</a>
         <a href="/web/students" class="nav-link active">Students</a>
         <a href="/web/coordinators" class="nav-link">Coordinators</a>
+        <a href="/web/admin/registrations" class="nav-link">Certificates</a>
+        <a href="/web/admin/payments" class="nav-link">Payments</a>
         <a href="/web/assignments" class="nav-link nav-pill">Assignments</a>
+        <div class="divider-v" style="width:1px; height:20px; background:var(--glass-border); margin:0 10px;"></div>
+        <a href="/logout" class="btn btn-danger btn-sm">Logout</a>
     </div>
 </nav>
 

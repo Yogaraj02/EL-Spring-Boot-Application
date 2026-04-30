@@ -1,30 +1,61 @@
-# ========================================
-#  College Event Management - Smart Start
-# ========================================
+# ============================================
+# College Event Management - START Script
+# ============================================
 
 Write-Host ""
-Write-Host "  ======================================" -ForegroundColor Cyan
-Write-Host "   College Event Management System" -ForegroundColor Cyan
-Write-Host "  ======================================" -ForegroundColor Cyan
+Write-Host "============================================" -ForegroundColor Cyan
+Write-Host "  College Event Management System" -ForegroundColor Cyan
+Write-Host "  http://localhost:8000" -ForegroundColor Cyan
+Write-Host "============================================" -ForegroundColor Cyan
 Write-Host ""
 
-Write-Host "  [1/2] Checking for port conflicts..." -ForegroundColor Yellow
-
-$pids = (netstat -ano | Select-String ":8080 |:8081 " | ForEach-Object { ($_ -split '\s+')[-1] } | Select-Object -Unique | Where-Object { $_ -match '^\d+$' -and $_ -ne '0' })
-
-if ($pids) {
-    foreach ($p in $pids) {
-        Write-Host "  Stopping PID $p..." -ForegroundColor Gray
-        taskkill /F /PID $p /T | Out-Null
+# Step 1: Kill any existing Java process on port 8000
+Write-Host ">> Checking port 8000..." -ForegroundColor Yellow
+$netstatLines = netstat -ano | Select-String ":8000\s" | Where-Object { $_ -match "LISTENING" }
+foreach ($line in $netstatLines) {
+    $parts = ($line.ToString().Trim() -split '\s+')
+    $procId = $parts[-1]
+    if ($procId -match '^\d+$' -and $procId -ne '0') {
+        Write-Host ">> Killing old process (PID: $procId)..." -ForegroundColor Red
+        taskkill /PID $procId /F | Out-Null
+        Start-Sleep -Milliseconds 500
     }
-    Start-Sleep -Seconds 1
-    Write-Host "  ✔ Ports cleared." -ForegroundColor Green
-} else {
-    Write-Host "  ✔ No conflicts found." -ForegroundColor Green
 }
-
+Write-Host ">> Port 8000 is free." -ForegroundColor Green
 Write-Host ""
-Write-Host "  [2/2] Starting Spring Boot (http://localhost:8081)..." -ForegroundColor Yellow
+Write-Host ">> Starting server... Press Ctrl+C to stop." -ForegroundColor Cyan
 Write-Host ""
 
-mvn spring-boot:run
+# Step 2: Launch Maven as a tracked process
+$mvnProcess = Start-Process -FilePath "mvn" `
+    -ArgumentList "spring-boot:run" `
+    -WorkingDirectory $PSScriptRoot `
+    -NoNewWindow `
+    -PassThru
+
+# Step 3: Wait and handle Ctrl+C cleanly
+try {
+    $mvnProcess.WaitForExit()
+} finally {
+    Write-Host ""
+    Write-Host ">> Shutting down server..." -ForegroundColor Yellow
+
+    # Kill the maven process tree
+    if (-not $mvnProcess.HasExited) {
+        taskkill /PID $mvnProcess.Id /T /F 2>$null | Out-Null
+    }
+
+    # Also kill any remaining Java process on port 8000
+    Start-Sleep -Milliseconds 500
+    $remaining = netstat -ano | Select-String ":8000\s" | Where-Object { $_ -match "LISTENING" }
+    foreach ($line in $remaining) {
+        $parts = ($line.ToString().Trim() -split '\s+')
+        $procId = $parts[-1]
+        if ($procId -match '^\d+$' -and $procId -ne '0') {
+            taskkill /PID $procId /F 2>$null | Out-Null
+        }
+    }
+
+    Write-Host ">> Server stopped. Port 8000 is now free." -ForegroundColor Green
+    Write-Host ""
+}

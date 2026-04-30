@@ -41,5 +41,35 @@ public class DatabaseFixer implements CommandLineRunner {
         } catch (Exception e) {
             System.out.println(">>> Note: Could not update coordinator_events constraint (might already be fixed).");
         }
+
+        // 4. Fix Foreign Key Constraints for deleting Students/Participants
+        try {
+            // event_registrations
+            try { jdbcTemplate.execute("ALTER TABLE event_registrations DROP FOREIGN KEY FKr249nu19r0w7nqbanwh4gbt39"); } catch (Exception e) {}
+            try { jdbcTemplate.execute("ALTER TABLE event_registrations DROP FOREIGN KEY event_registrations_ibfk_1"); } catch (Exception e) {}
+            try { jdbcTemplate.execute("ALTER TABLE event_registrations ADD CONSTRAINT fk_er_student FOREIGN KEY (participant_id) REFERENCES participants(participant_id) ON DELETE CASCADE"); } catch (Exception e) {}
+            
+            // payments
+            try { jdbcTemplate.execute("ALTER TABLE payments DROP FOREIGN KEY FK3v2k3ymf5md0mksns5q7l1d4t"); } catch (Exception e) {}
+            try { jdbcTemplate.execute("ALTER TABLE payments DROP FOREIGN KEY payments_ibfk_1"); } catch (Exception e) {}
+            try { jdbcTemplate.execute("ALTER TABLE payments ADD CONSTRAINT fk_pay_student FOREIGN KEY (participant_id) REFERENCES participants(participant_id) ON DELETE CASCADE"); } catch (Exception e) {}
+
+            // certificates
+            try { jdbcTemplate.execute("ALTER TABLE certificates DROP FOREIGN KEY FKsokg0kmb22k5f7vym818oay7s"); } catch (Exception e) {}
+            try { jdbcTemplate.execute("ALTER TABLE certificates DROP FOREIGN KEY certificates_ibfk_1"); } catch (Exception e) {}
+            try { jdbcTemplate.execute("ALTER TABLE certificates ADD CONSTRAINT fk_cert_student FOREIGN KEY (participant_id) REFERENCES participants(participant_id) ON DELETE CASCADE"); } catch (Exception e) {}
+
+            // event_participants
+            try { jdbcTemplate.execute("ALTER TABLE event_participants DROP FOREIGN KEY FKt4n3g8x2q1v7k9d4p8w6m5j2c"); } catch (Exception e) {}
+            try { jdbcTemplate.execute("ALTER TABLE event_participants DROP FOREIGN KEY event_participants_ibfk_1"); } catch (Exception e) {}
+            try { jdbcTemplate.execute("ALTER TABLE event_participants ADD CONSTRAINT fk_ep_student FOREIGN KEY (participant_id) REFERENCES participants(participant_id) ON DELETE CASCADE"); } catch (Exception e) {}
+
+            // feedbacks
+            try { jdbcTemplate.execute("ALTER TABLE feedbacks DROP FOREIGN KEY FK2b9r5j7k6h4m1d8s3c0q9w5v1"); } catch (Exception e) {}
+            try { jdbcTemplate.execute("ALTER TABLE feedbacks DROP FOREIGN KEY feedbacks_ibfk_1"); } catch (Exception e) {}
+            try { jdbcTemplate.execute("ALTER TABLE feedbacks ADD CONSTRAINT fk_fb_student FOREIGN KEY (participant_id) REFERENCES participants(participant_id) ON DELETE CASCADE"); } catch (Exception e) {}
+
+            System.out.println(">>> Database Fix: All child tables now support CASCADE DELETE for students.");
+        } catch (Exception e) {}
     }
 }

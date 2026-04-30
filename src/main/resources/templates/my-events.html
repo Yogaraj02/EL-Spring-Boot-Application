@@ -65,7 +65,7 @@
                             <span th:if="${reg.certificateType == null}" class="badge" style="background: rgba(255,255,255,0.05);">PENDING</span>
                             <div th:if="${reg.certificateType != null}" style="display: flex; flex-direction: column; gap: 4px;">
                                 <span class="badge badge-purple" th:text="${reg.certificateType}">TYPE</span>
-                                <a href="#" class="btn btn-primary btn-sm" style="font-size: 0.7rem; padding: 2px 8px;">Download ⬇️</a>
+                                <a th:href="@{/web/events/certificate/download/{id}(id=${reg.registrationId})}" class="btn btn-primary btn-sm" style="font-size: 0.7rem; padding: 2px 8px;" target="_blank">Download ⬇️</a>
                             </div>
                         </td>
                     </tr>

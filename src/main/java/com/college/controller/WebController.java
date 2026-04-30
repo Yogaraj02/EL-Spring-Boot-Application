@@ -12,6 +12,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import com.college.service.EmailService;
+import com.college.service.PdfService;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import jakarta.servlet.http.HttpServletResponse;
+import java.io.PrintWriter;
 import com.college.entity.EventRegistration;
 import com.college.entity.Payment;
 import com.college.entity.Certificate;
@@ -51,6 +58,12 @@ public class WebController {
     @Autowired
     private CertificateRepository certificateRepository;
 
+    @Autowired
+    private EmailService emailService;
+
+    @Autowired
+    private PdfService pdfService;
+
     /** Generate a random positive 5-digit ID that is not already in use */
     private int uniqueEventId() {
         int id;
@@ -74,16 +87,32 @@ public class WebController {
         if (principal != null) {
             Student user = studentRepository.findByEmail(principal.getName()).orElse(null);
             if (user != null && user.getRole().equals("ADMIN")) {
-                // Fetch stats for Admin Dashboard
-                model.addAttribute("totalEvents", eventService.getAllEvents().size());
-                model.addAttribute("totalStudents", studentService.getAllStudents().size());
-                model.addAttribute("totalRegistrations", registrationRepository.count());
-                
-                Long revenue = paymentRepository.getTotalRevenue();
-                model.addAttribute("totalRevenue", revenue != null ? revenue : 0);
+                return "redirect:/web/admin/dashboard";
             }
         }
         return "index";
+    }
+
+    // -------- Admin Dashboard --------
+    @GetMapping("/admin/dashboard")
+    @PreAuthorize("hasRole('ADMIN')")
+    public String adminDashboard(Model model) {
+        long totalStudents = studentRepository.count();
+        long totalEvents = eventService.getAllEvents().size();
+        long totalRegistrations = registrationRepository.count();
+        
+        List<Payment> payments = paymentRepository.findAll();
+        long totalRevenue = payments.stream()
+                .filter(p -> "SUCCESS".equals(p.getPaymentStatus()))
+                .mapToLong(p -> p.getAmount() != null ? p.getAmount() : 0)
+                .sum();
+                
+        model.addAttribute("totalStudents", totalStudents);
+        model.addAttribute("totalEvents", totalEvents);
+        model.addAttribute("totalRegistrations", totalRegistrations);
+        model.addAttribute("totalRevenue", totalRevenue);
+        
+        return "admin-dashboard";
     }
 
     // -------- Events --------
@@ -177,6 +206,8 @@ public class WebController {
         }
         return "redirect:/web/events";
     }
+
+
 
     // -------- Coordinators --------
     @GetMapping("/coordinators")
@@ -398,6 +429,9 @@ public class WebController {
             p.setPaymentType("ONLINE");
             paymentRepository.save(p);
 
+            // Send registration email
+            emailService.sendEventRegistrationEmail(s.getEmail(), s.getName(), e.getName());
+
             ra.addFlashAttribute("success", "Successfully registered for " + e.getName());
         }
         return "redirect:/web/my-events";
@@ -429,6 +463,12 @@ public class WebController {
             cert.setType(type);
             certificateRepository.save(cert);
 
+            // Generate PDF
+            byte[] pdfBytes = pdfService.generateCertificatePdf(reg.getStudent().getName(), reg.getEvent().getName(), type);
+
+            // Send certificate email
+            emailService.sendCertificateEmail(reg.getStudent().getEmail(), reg.getStudent().getName(), reg.getEvent().getName(), type, pdfBytes);
+
             ra.addFlashAttribute("success", "Certificate issued: " + type + " for " + reg.getStudent().getName());
         }
         return "redirect:/web/admin/registrations";
@@ -441,10 +481,70 @@ public class WebController {
         return "api-tests";
     }
 
+    @GetMapping("/admin/registrations/export")
+    @PreAuthorize("hasRole('ADMIN')")
+    public void exportRegistrationsCSV(HttpServletResponse response) throws Exception {
+        response.setContentType("text/csv");
+        response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=registrations.csv");
+        
+        PrintWriter writer = response.getWriter();
+        writer.println("Registration ID,Student Name,Email,Event Name,Status,Certificate");
+        
+        List<EventRegistration> regs = registrationRepository.findAll();
+        for (EventRegistration reg : regs) {
+            writer.printf("%d,%s,%s,%s,%s,%s\n",
+                    reg.getId(),
+                    reg.getStudent().getName(),
+                    reg.getStudent().getEmail(),
+                    reg.getEvent().getName(),
+                    reg.getStatus(),
+                    reg.getCertificateType() != null ? reg.getCertificateType() : "None");
+        }
+    }
+
     @GetMapping("/admin/payments")
     @PreAuthorize("hasRole('ADMIN')")
     public String adminPayments(Model model) {
         model.addAttribute("payments", paymentRepository.findAll());
         return "admin-payments";
+    }
+
+    @GetMapping("/admin/payments/export")
+    @PreAuthorize("hasRole('ADMIN')")
+    public void exportPaymentsCSV(HttpServletResponse response) throws Exception {
+        response.setContentType("text/csv");
+        response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=payments.csv");
+        
+        PrintWriter writer = response.getWriter();
+        writer.println("Payment ID,Student Name,Event Name,Amount,Status,Type,Date");
+        
+        List<Payment> payments = paymentRepository.findAll();
+        for (Payment pay : payments) {
+            writer.printf("%d,%s,%s,%d,%s,%s,%s\n",
+                    pay.getPaymentId(),
+                    pay.getStudent().getName(),
+                    pay.getEvent().getName(),
+                    pay.getAmount(),
+                    pay.getPaymentStatus(),
+                    pay.getPaymentType(),
+                    pay.getPaymentDate() != null ? pay.getPaymentDate().toString() : "");
+        }
+    }
+
+    // -------- Download Certificate --------
+    @GetMapping("/events/certificate/download/{regId}")
+    public ResponseEntity<byte[]> downloadCertificate(@PathVariable("regId") Long regId, Principal principal) {
+        EventRegistration reg = registrationRepository.findById(regId).orElse(null);
+        if (reg != null && reg.getCertificateType() != null) {
+            byte[] pdfBytes = pdfService.generateCertificatePdf(reg.getStudent().getName(), reg.getEvent().getName(), reg.getCertificateType());
+            
+            if (pdfBytes != null) {
+                return ResponseEntity.ok()
+                        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=Certificate_" + reg.getEvent().getName().replaceAll(" ", "_") + ".pdf")
+                        .contentType(MediaType.APPLICATION_PDF)
+                        .body(pdfBytes);
+            }
+        }
+        return ResponseEntity.notFound().build();
     }
 }
